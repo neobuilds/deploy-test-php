@@ -105,3 +105,9 @@ final class PhpTaskboard_Cfg
         return $root . DIRECTORY_SEPARATOR . $path;
     }
 }
+/** Read the fixture's dotenv syntax without treating # comments as INI settings. */
+function php_tb_parse_environment(string $content): array
+{
+    $content = preg_replace('/^\\s*#.*$/m', '', $content);
+    return parse_ini_string($content, false, INI_SCANNER_RAW) ?: [];
+}
