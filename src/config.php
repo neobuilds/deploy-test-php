@@ -80,7 +80,7 @@ final class PhpTaskboard_Cfg
         $cfg->port = (int)$port;
         $cfg->bind = $bind;
         $cfg->dataDir = $dataDir;
-        $cfg->dbPath = $dbPath;
+        $cfg->dbPath = self::envGet($env, 'DATABASE_URL', '') ?: $dbPath;
         $cfg->marker = $marker;
         $cfg->root = $root;
         $cfg->basePath = $basePath;

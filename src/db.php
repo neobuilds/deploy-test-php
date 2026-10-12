@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+require_once __DIR__.'/postgres.php';
 
 /**
  * SQLite persistence for the plain-PHP taskboard.
@@ -111,6 +112,7 @@ function php_tb_seed(PDO $pdo): array
 /** Open a connection and ensure schema + guarded seed data. */
 function php_tb_open(string $path): PDO
 {
+    if (str_starts_with($path, 'postgres')) { return php_tb_postgres_open($path); }
     $dir = dirname($path);
     if (!is_dir($dir)) {
         if (!@mkdir($dir, 0777, true) && !is_dir($dir)) {
@@ -145,6 +147,13 @@ function php_tb_open(string $path): PDO
  */
 function php_tb_probe(string $path): array
 {
+    if (str_starts_with($path, 'postgres')) {
+        try {
+            $pdo = php_tb_postgres_open($path);
+            $pdo->exec("INSERT OR REPLACE INTO heartbeat (id, checked_at) VALUES (1, datetime('now'))");
+            return ['ok' => true, 'detail' => (string)$pdo->query('SELECT checked_at FROM heartbeat WHERE id=1')->fetchColumn()];
+        } catch (Throwable) { return ['ok' => false, 'detail' => 'PostgreSQL unavailable']; }
+    }
     $pdo = null;
     try {
         $dir = dirname($path);

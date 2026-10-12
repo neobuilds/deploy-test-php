@@ -30,7 +30,8 @@ require $root . '/src/db.php';
 require $root . '/src/api.php';
 require $root . '/src/ui.php';
 
-$cfg = PhpTaskboard_Cfg::fromEnv(getenv());
+$fileEnv = is_file($root.'/.env') ? (parse_ini_file($root.'/.env', false, INI_SCANNER_RAW) ?: []) : [];
+$cfg = PhpTaskboard_Cfg::fromEnv(array_merge($fileEnv, getenv()));
 $sessionToken = php_tb_csrf_token();
 
 $requestUri = $_SERVER['REQUEST_URI'] ?? '/';

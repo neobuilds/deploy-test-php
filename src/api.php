@@ -565,9 +565,9 @@ function php_tb_api_dispatch(
         if ($route === 'api/health/ready' && $method === 'GET') {
             $probe = php_tb_probe($dbPath);
             if ($probe['ok']) {
-                return ['status' => 200, 'headers' => [], 'body' => ['status' => 'ready', 'db' => 'sqlite', 'checked_at' => $probe['detail']]];
+                return ['status' => 200, 'headers' => [], 'body' => ['status' => 'ready', 'db' => str_starts_with($dbPath, 'postgres') ? 'postgresql' : 'sqlite', 'checked_at' => $probe['detail']]];
             }
-            return ['status' => 503, 'headers' => [], 'body' => ['status' => 'unavailable', 'db' => 'sqlite', 'detail' => $probe['detail']]];
+            return ['status' => 503, 'headers' => [], 'body' => ['status' => 'unavailable', 'db' => str_starts_with($dbPath, 'postgres') ? 'postgresql' : 'sqlite', 'detail' => $probe['detail']]];
         }
         if ($route === 'api/meta' && $method === 'GET') {
             return [
@@ -578,7 +578,7 @@ function php_tb_api_dispatch(
                     'description' => 'Plain PHP taskboard: PDO/SQLite persistence, sessions + CSRF, validated CRUD, search/filter.',
                     'release' => $cfg->marker,
                     'runtime' => ['name' => 'php', 'version' => PHP_VERSION],
-                    'database' => ['engine' => 'sqlite', 'path' => $cfg->dbPath],
+                    'database' => ['engine' => str_starts_with($cfg->dbPath, 'postgres') ? 'postgresql' : 'sqlite'],
                     'csrf' => $sessionToken,
                 ],
             ];

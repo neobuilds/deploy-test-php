@@ -221,3 +221,11 @@ VERSION         non-sensitive release marker written by scripts/build.sh
 
 MIT — see [LICENSE](LICENSE). This fixture is part of the MIT-licensed
 [xCloud app-compatibility suite](https://github.com/xCloudNobin/app-compatibility).
+## PostgreSQL acceptance branch
+
+Set `DATABASE_URL=postgresql://USER:PASSWORD@127.0.0.1:PORT/DATABASE` and enable
+`pdo_pgsql` for the site's PHP version. This branch also reads `.env` for PHP-FPM;
+process environment takes precedence. SQLite remains the default. The same real
+project/task CRUD and readiness write/read run against PostgreSQL, with no URL
+or credentials included in metadata or connection errors. Schema and demo data
+initialize once; restarts and redeploys retain database state.
