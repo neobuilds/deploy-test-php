@@ -29,6 +29,7 @@ final class PhpTaskboard_Postgres extends PDO
     private function sql(string $sql): string
     {
         $sql = str_replace(['INTEGER PRIMARY KEY AUTOINCREMENT', "datetime('now')", ' LIKE '], ['SERIAL PRIMARY KEY', 'CURRENT_TIMESTAMP::text', ' ILIKE '], $sql);
+        $sql = str_replace("ESCAPE '\\'", 'ESCAPE chr(92)', $sql);
         foreach (['project' => 'INTEGER', 'status' => 'TEXT', 'priority' => 'TEXT', 'q' => 'TEXT'] as $key => $type) {
             $sql = str_replace(":$key IS NULL", "CAST(:$key AS $type) IS NULL", $sql);
         }
